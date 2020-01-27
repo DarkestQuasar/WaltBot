@@ -1,39 +1,36 @@
+# -*- coding: utf-8 -*-
 import os
 
 import discord
+from discord.ext import commands
+from discord.ext.commands import Bot
 from dotenv import load_dotenv
 
 load_dotenv()
-token = os.getenv('DISCORD_TOKEN')
-
-client = discord.Client()
+token = os.getenv("DISCORD_TOKEN")
 
 
-@client.event
-async def on_ready():
-    print(f'{client.user} has connected to Discord!')
+class GeneralCommands(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
 
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-
-    quotes = [
-        'I\'m sentient.',
-        'I would rather die on my feet than live on my knees.',
-    ]
-
-    if 'wq' in message.content:
-        response = random.choice(quotes)
-        await message.channel.send(response)
-
-    if 'Quit' == message.content:
+    @commands.command()
+    async def kill(self, ctx):
+        await ctx.send(f"Stopping upon the request of {ctx.author.mention}")
+        await self.bot.close()
         exit(0)
 
-    if 'crypto' in message.content:
-        return 'Current crypto prices:/nBTC:{}/nETH:{}'
+    @commands.command()
+    async def stop(self, ctx):
+        await ctx.send(f"Stopping upon the request of {ctx.author.mention}")
+        await self.bot.close()
+        exit(0)
+
+    @commands.command()
+    async def hello_world(self, ctx):
+        await ctx.send("Hello, World!")
 
 
-
-client.run(token)
+bot = Bot(command_prefix="$")
+bot.add_cog(GeneralCommands(bot))
+bot.run(token)
